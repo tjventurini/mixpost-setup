@@ -3,8 +3,8 @@ init:
 	ln -i -s docker-compose.local.yml docker-compose.yml
 
 init-prod:
-	cp .env.example .env
-	ln -s docker-compose.prod.yml docker-compose.yml
+	cp -i .env.example .env
+	ln -i -s docker-compose.prod.yml docker-compose.yml
 
 up:
 	docker compose up -d
