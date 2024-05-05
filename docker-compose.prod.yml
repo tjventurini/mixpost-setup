@@ -16,9 +16,9 @@ services:
           - traefik.enable=true
           - "traefik.docker.network=reverse-proxy"
           - traefik.http.routers.mixpost.rule=Host(`${APP_DOMAIN}`)
-          - "traefik.http.routers.someservice.entrypoints=websecure"
-          - "traefik.http.routers.someservice.tls=true"
-          - "traefik.http.routers.someservice.tls.certresolver=letsencrypt"
+          - "traefik.http.routers.mixpost.entrypoints=websecure"
+          - "traefik.http.routers.mixpost.tls=true"
+          - "traefik.http.routers.mixpost.tls.certresolver=letsencrypt"
           - traefik.http.middlewares.mixpost.headers.SSLRedirect=true
           - traefik.http.middlewares.mixpost.headers.STSSeconds=315360000
           - traefik.http.middlewares.mixpost.headers.browserXSSFilter=true
