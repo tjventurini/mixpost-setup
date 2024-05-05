@@ -1,0 +1,67 @@
+networks:
+  frontend:
+    external: true
+    name: reverse-proxy
+    driver: ${NETWORKS_DRIVER}
+  backend:
+    driver: ${NETWORKS_DRIVER}
+
+
+services:
+    mixpost:
+        image: inovector/mixpost:latest
+        env_file:
+            - .env
+        labels:
+          - traefik.enable=true
+          - "traefik.docker.network=reverse-proxy"
+          - traefik.http.routers.mixpost.rule=Host(`${APP_DOMAIN}`)
+          - traefik.http.routers.mixpost.entrypoints=web
+        volumes:
+            - storage:/var/www/html/storage/app
+            - logs:/var/www/html/storage/logs
+            - .env:/var/www/html/.env
+        depends_on:
+            - mysql
+            - redis 
+        restart: unless-stopped
+        networks:
+          - frontend
+          - backend
+    mysql:
+        image: 'mysql/mysql-server:8.0'
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_USER: ${DB_USERNAME}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+        volumes:
+            - 'mysql:/var/lib/mysql'
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-p ${DB_PASSWORD}"]
+            retries: 3
+            timeout: 5s
+        restart: unless-stopped
+        networks:
+          - backend
+    redis:
+        image: 'redis:latest'
+        command: redis-server --appendonly yes --replica-read-only no
+        volumes:
+            - 'redis:/data'
+        healthcheck:
+            test: ["CMD", "redis-cli", "ping"]
+            retries: 3
+            timeout: 5s
+        restart: unless-stopped  
+        networks:
+          - backend
+
+volumes:
+    mysql:
+        driver: local
+    redis:
+        driver: local
+    storage:
+        driver: local
+    logs:
+        driver: local
