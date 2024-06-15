@@ -24,7 +24,7 @@ services:
         depends_on:
             - mysql
             - redis 
-        restart: unless-stopped
+        restart: no
         networks:
           - frontend
           - backend
@@ -40,7 +40,7 @@ services:
             test: ["CMD", "mysqladmin", "ping", "-p ${DB_PASSWORD}"]
             retries: 3
             timeout: 5s
-        restart: unless-stopped
+        restart: no
         networks:
           - backend
     redis:
@@ -52,7 +52,7 @@ services:
             test: ["CMD", "redis-cli", "ping"]
             retries: 3
             timeout: 5s
-        restart: unless-stopped  
+        restart: no  
         networks:
           - backend
 
